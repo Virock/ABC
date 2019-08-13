@@ -875,7 +875,7 @@ router.get("/proof/:id", async function(req, res, next) {
     //Else,
     //return proof
     logger.info(`${req.user.id} successfully got act proof ${req.params.id}`);
-    res.sendFile(`${process.env.files_folder}/${new_name}`);
+    res.download(`${process.env.files_folder}/${new_name}`, original_name);
   } catch (err) {
     next(createError(400, err.message));
     logger.error(`${req.user.id} failed to get act proof ${req.params.id}`);
@@ -902,10 +902,11 @@ router.get("/admin_proof/:id", async function(req, res, next) {
     //If not, error
 
     const new_name = act_proof[0].acts[0].proof_of_completion[0].new_name;
+    const original_name = act_proof[0].acts[0].proof_of_completion[0].original_name;
     //Else,
     //return proof
     logger.info(`${req.user.id} successfully got act proof ${req.params.id}`);
-    res.sendFile(`${process.env.files_folder}/${new_name}`);
+    res.download(`${process.env.files_folder}/${new_name}`, original_name);
   } catch (err) {
     next(createError(400, err.message));
     logger.error(`${req.user.id} failed to get act proof ${req.params.id}`);
@@ -956,10 +957,11 @@ router.get("/manage_proof/:id", async function(req, res, next) {
     const original_name =
       act_proof[0].users_under_review.proof_of_completion.original_name;
     const file_location = new_name.replace(`${process.env.website}`, "");
+    // console.log(original_name);
     //Else,
     //return proof
     logger.info(`${req.user.id} successfully got act proof ${req.params.id}`);
-    res.sendFile(`${process.env.files_folder}/${new_name}`);
+    res.download(`${process.env.files_folder}/${new_name}`, original_name);
   } catch (err) {
     next(createError(400, err.message));
     logger.error(`${req.user.id} failed to get act proof ${req.params.id}`);

@@ -56,86 +56,96 @@ router.get("/", async function(req, res, next) {
     //   .lean();
 
     count = User.find(search).countDocuments();
+    const results = User.find(
+      search,
+      "first_name last_name enabled creation_date points"
+    )
+      .sort({ [sort]: order })
+      .skip(offset)
+      .limit(10);
 
-    const results = User.aggregate([
-      { $match: search },
-      {
-        $unwind: {
-          path: "$acts",
-          preserveNullAndEmptyArrays: true
-        }
-      },
-      {
-        $match: {
-          $or: [{ "acts.state": "COMPLETED" }, { acts: { $exists: false } }]
-        }
-      },
-      {
-        $group: {
-          _id: "$_id",
-          data: {
-            $push: "$$ROOT"
-          },
-          acts: {
-            $push: "$acts"
-          }
-        }
-      },
-      {
-        $lookup: {
-          from: "acts",
-          localField: "acts.id",
-          foreignField: "_id",
-          as: "acts"
-        }
-      },
-      {
-        $addFields: {
-          sum: { $sum: "$acts.reward_points" },
-          data: { $arrayElemAt: ["$data", 0] }
-        }
-      },
-      {
-        $addFields: {
-          "data.acts": "$acts",
-          "data.total_points": "$sum"
-        }
-      },
-      {
-        $replaceRoot: {
-          newRoot: "$data"
-        }
-      },
-      {
-        $addFields: {
-          total_points1: {$sum: ["$points_given_by_admin.amount"]}
-        }
-      },
-      {
-        $sort: { [sort]: order }
-      },
-      {
-        $skip: offset
-      },
-      {
-        $limit: 10
-      },
-      {
-        $project: {
-          first_name: true,
-          last_name: true,
-          enabled: true,
-          creation_date: true,
-          total_points: {$sum: ["$total_points", "$total_points1"]}
-        }
-      }
-    ]);
+    //Can't remember why I did this but it's probably important
+    //Do not delete
+    // const results = User.aggregate([
+    //   { $match: search },
+    //   {
+    //     $unwind: {
+    //       path: "$acts",
+    //       preserveNullAndEmptyArrays: true
+    //     }
+    //   },
+    //   {
+    //     $match: {
+    //       $or: [{ "acts.state": "COMPLETED" }, { acts: { $exists: false } }]
+    //     }
+    //   },
+    //   {
+    //     $group: {
+    //       _id: "$_id",
+    //       data: {
+    //         $push: "$$ROOT"
+    //       },
+    //       acts: {
+    //         $push: "$acts"
+    //       }
+    //     }
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: "acts",
+    //       localField: "acts.id",
+    //       foreignField: "_id",
+    //       as: "acts"
+    //     }
+    //   },
+    //   {
+    //     $addFields: {
+    //       sum: { $sum: "$acts.reward_points" },
+    //       data: { $arrayElemAt: ["$data", 0] }
+    //     }
+    //   },
+    //   {
+    //     $addFields: {
+    //       "data.acts": "$acts",
+    //       "data.total_points": "$sum"
+    //     }
+    //   },
+    //   {
+    //     $replaceRoot: {
+    //       newRoot: "$data"
+    //     }
+    //   },
+    //   {
+    //     $addFields: {
+    //       total_points1: {$sum: ["$points_given_by_admin.amount"]}
+    //     }
+    //   },
+    //   {
+    //     $sort: { [sort]: order }
+    //   },
+    //   {
+    //     $skip: offset
+    //   },
+    //   {
+    //     $limit: 10
+    //   },
+    //   {
+    //     $project: {
+    //       first_name: true,
+    //       last_name: true,
+    //       enabled: true,
+    //       creation_date: true,
+    //       total_points: {$sum: ["$total_points", "$total_points1"]}
+    //     }
+    //   }
+    // ]);
 
     const promises = [results, count];
     let returned_results, pages;
     await Promise.all(promises).then(function(values) {
       returned_results = values[0];
       count = values[1];
+      // console.log(returned_results);
       pages = Math.ceil(count / 10);
     });
     logger.info(`${req.user.id} successfully got users `);

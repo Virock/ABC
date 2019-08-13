@@ -43,6 +43,9 @@ a:hover {
   height: 100%;
   margin: 0px auto;
 }
+.pointers{
+    cursor: pointer;
+}
 .left-content {
     float: right;
         width: 86.5%;

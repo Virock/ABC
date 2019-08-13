@@ -134,7 +134,7 @@
                               data-target="#exampleModalCenter"
                             >{{$t('give_points')}}</button>
                           </td>
-                          <td><nuxt-link :to="`/admin/users/${user._id}/points`">{{user.total_points}}</nuxt-link></td>
+                          <td><nuxt-link :to="`/admin/users/${user._id}/points`">{{user.points}}</nuxt-link></td>
                         </tr>
                       </tbody>
                     </table>
@@ -152,14 +152,14 @@
                           :class="{active: query.page == index + 1}"
                         >
                           <a
-                            class="page-link"
+                            class="page-link pointers"
                             :class="{disabled: query.page == index + 1}"
                             @click="navigateTo(index + 1)"
                           >{{index + 1}}</a>
                         </li>
 
                         <li class="page-item" :class="{disabled: query.page == data.count}">
-                          <a class="page-link" @click="next">{{$t('next')}}</a>
+                          <a class="page-link pointers" @click="next">{{$t('next')}}</a>
                         </li>
                       </ul>
                     </nav>
@@ -246,6 +246,7 @@ export default {
       )
       .then(function(res) {
         data = res.data;
+        // console.log(data);
         // Loop through data and format date
         data.data.forEach(element => {
           element.creation_date = moment(element.creation_date).format(

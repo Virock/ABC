@@ -140,6 +140,9 @@ a:hover {
   padding: 0;
   margin-bottom: 20px;
 }
+.pointers{
+    cursor: pointer;
+}
 #menu li {
   position: relative;
   margin: 0;
