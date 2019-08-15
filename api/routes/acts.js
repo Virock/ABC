@@ -77,8 +77,12 @@ router.put("/:act_id/user/:user_id/approve", async function(req, res, next) {
     const promised_user = User.findOne(
       {
         _id: req.params.user_id,
-        "acts.id": req.params.act_id,
-        "acts.state": "UNDER_REVIEW"
+        acts: {
+          $elemMatch: {
+            id: mongoose.Types.ObjectId(req.params.act_id),
+            state: "UNDER_REVIEW"
+          }
+        }
       },
       { "acts.$": true, first_name: true, last_name: true, email: true }
     ).lean();
@@ -139,8 +143,12 @@ router.put("/:act_id/user/:user_id/approve", async function(req, res, next) {
     const promised_user_change = User.findOneAndUpdate(
       {
         _id: req.params.user_id,
-        "acts.id": req.params.act_id,
-        "acts.state": "UNDER_REVIEW"
+        acts: {
+          $elemMatch: {
+            id: mongoose.Types.ObjectId(req.params.act_id),
+            state: "UNDER_REVIEW"
+          }
+        }
       },
       {
         //Change the state of this act to completed in the user object
@@ -179,8 +187,12 @@ router.put("/:act_id/user/:user_id/disapprove", async function(req, res, next) {
     const promised_user = User.findOne(
       {
         _id: req.params.user_id,
-        "acts.id": req.params.act_id,
-        "acts.state": "UNDER_REVIEW"
+        acts: {
+          $elemMatch: {
+            id: mongoose.Types.ObjectId(req.params.act_id),
+            state: "UNDER_REVIEW"
+          }
+        }
       },
       { "acts.$": true, first_name: true, last_name: true, email: true }
     ).lean();
@@ -231,8 +243,14 @@ router.put("/:act_id/user/:user_id/disapprove", async function(req, res, next) {
     const promised_user_change = User.findOneAndUpdate(
       {
         _id: req.params.user_id,
-        "acts.id": req.params.act_id,
-        "acts.state": "UNDER_REVIEW"
+        acts: {
+          $elemMatch: {
+            id: mongoose.Types.ObjectId(req.params.act_id),
+            state: "UNDER_REVIEW"
+          }
+        }
+        // "acts.id": req.params.act_id,
+        // "acts.state": "UNDER_REVIEW"
       },
       {
         //Change the state of this act to rejected in the user object
@@ -902,7 +920,8 @@ router.get("/admin_proof/:id", async function(req, res, next) {
     //If not, error
 
     const new_name = act_proof[0].acts[0].proof_of_completion[0].new_name;
-    const original_name = act_proof[0].acts[0].proof_of_completion[0].original_name;
+    const original_name =
+      act_proof[0].acts[0].proof_of_completion[0].original_name;
     //Else,
     //return proof
     logger.info(`${req.user.id} successfully got act proof ${req.params.id}`);
