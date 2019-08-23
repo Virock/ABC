@@ -11,9 +11,11 @@ async function run() {
 
   await Act.updateMany(
     {
-      expiration_date: { $exists: true },
-      expiration_date: { $gte: start },
-      expiration_date: { $lt: end }
+      $and: [
+        { expiration_date: { $exists: true } },
+        { expiration_date: { $gte: start } },
+        { expiration_date: { $lt: end } }
+      ]
     },
     {
       state: "NOT_AVAILABLE"
@@ -22,4 +24,4 @@ async function run() {
 }
 module.exports = {
   run
-}
+};

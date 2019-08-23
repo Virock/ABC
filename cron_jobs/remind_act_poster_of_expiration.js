@@ -3,7 +3,6 @@ const mail = require("../send_mail");
 require("dotenv").load();
 
 async function run() {
-  
   const today = new Date();
   const a_week_in_the_future = new Date();
   a_week_in_the_future.setDate(today.getDate() + 7);
@@ -16,9 +15,11 @@ async function run() {
   //If act will expire in a week's time,
   const acts = await Act.find(
     {
-      expiration_date: { $exists: true },
-      expiration_date: { $gte: start },
-      expiration_date: { $lt: end }
+      $and: [
+        { expiration_date: { $exists: true } },
+        { expiration_date: { $gte: start } },
+        { expiration_date: { $lt: end } }
+      ]
     },
     { act_provider: true, name: true }
   );
@@ -41,4 +42,4 @@ async function run() {
 }
 module.exports = {
   run
-}
+};
