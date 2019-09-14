@@ -229,6 +229,9 @@ router.put("/:id", async function(req, res, next) {
     if (user.unverified_email && req.body.enabled) {
       user.email = user.unverified_email;
       user.unverified_email = undefined;
+      //Remove the verification token as well.
+      if (user.email_verification_token)
+        user.email_verification_token = undefined;
     }
     await user.save();
     logger.info(`${req.user.id} successfully edited user ${user._id}`);
