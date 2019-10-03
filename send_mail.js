@@ -6,7 +6,7 @@ require("dotenv").load();
 let error_occured = false;
 
 const transporter = nodemailer.createTransport({
-  name: "www.assetbuildingclinic.org",
+  name: "abc",
   host: "localhost",
   port: 25,
   secure: false,
