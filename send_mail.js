@@ -1,5 +1,6 @@
 const nodemailer = require("nodemailer");
 const Email = require("email-templates");
+const fs = require("fs");
 const secret = require("./secret");
 const logger = require("./logger").winston;
 require("dotenv").load();
