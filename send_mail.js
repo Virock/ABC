@@ -6,11 +6,17 @@ require("dotenv").load();
 let error_occured = false;
 
 const transporter = nodemailer.createTransport({
-  name: "abc",
   host: "localhost",
   port: 25,
   secure: false,
-  ignoreTLS: true
+  ignoreTLS: true,
+  dkim: {
+    domainName: "assetbuildingclinic.org",
+    keySelector: "default",
+    privateKey: fs.readFileSync("./default.assetbuildingclinic.org.pem", "utf8"),
+    cacheDir: "/tmp",
+    cacheTreshold: 100 * 1024
+  }
 });
 
 const email = new Email({
@@ -261,9 +267,7 @@ async function forgot_password(user_email, token) {
         token
       }
     });
-    logger.info(
-      `Password reset instructions have been sent to ${user_email}`
-    );
+    logger.info(`Password reset instructions have been sent to ${user_email}`);
   } catch (err) {
     logger.error(
       `Password reset instructions failed while sending to ${user_email}`
